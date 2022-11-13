@@ -7,7 +7,6 @@ import javax.persistence.*
 @Table(name = "items")
 data class Item (
 
-        @Id
         @Column(name = "sku")
         val sku: String,
 
@@ -25,6 +24,10 @@ data class Item (
         val order: Order
 
 ) {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        val itemId: Int = 0
+
         @Column(name = "qcStatus")
         var qcStatus: QcItemStatus? = null
 
