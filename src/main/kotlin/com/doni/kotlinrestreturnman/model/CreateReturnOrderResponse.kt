@@ -1,8 +1,6 @@
 package com.doni.kotlinrestreturnman.model
 
-import com.doni.kotlinrestreturnman.entity.Item
-
-class ReturnOrderResponse (
+class CreateReturnOrderResponse (
             val returnOrderId: Long,
             val refundAmount: Int
 )

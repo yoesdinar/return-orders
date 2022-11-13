@@ -2,9 +2,7 @@ package com.doni.kotlinrestreturnman.controller
 
 import com.doni.kotlinrestreturnman.model.*
 import com.doni.kotlinrestreturnman.service.ReturnOrderService
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class ReturnOrderController(val returnOrderService: ReturnOrderService) {
@@ -14,7 +12,7 @@ class ReturnOrderController(val returnOrderService: ReturnOrderService) {
             produces = ["application/json"],
             consumes = ["application/json"]
     )
-    fun createReturnOrder(@RequestBody body: PendingRequest): WebResponse<PendingResponse> {
+    fun pendingReturn(@RequestBody body: PendingRequest): WebResponse<PendingResponse> {
         val returnPendingResponse = returnOrderService.pendingReturn(body)
         return WebResponse(
                 code = 200,
@@ -33,6 +31,19 @@ class ReturnOrderController(val returnOrderService: ReturnOrderService) {
                 code = 200,
                 status = "OK",
                 data = returnOrderResponse
+        )
+    }
+
+    @GetMapping(
+            value = ["/returns/{id}"],
+            produces = ["application/json"]
+    )
+    fun getReturnOrder(@PathVariable("id") id: Long): WebResponse<GetReturnOrderResponse> {
+        val getReturnOrderResponse = returnOrderService.getReturnOrder(id)
+        return WebResponse(
+                code = 200,
+                status = "OK",
+                data = getReturnOrderResponse
         )
     }
 }

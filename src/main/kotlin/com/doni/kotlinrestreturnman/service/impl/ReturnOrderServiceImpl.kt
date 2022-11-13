@@ -4,6 +4,7 @@ import com.doni.kotlinrestreturnman.entity.Item
 import com.doni.kotlinrestreturnman.entity.ReturnOrder
 import com.doni.kotlinrestreturnman.error.ItemToReturnNotFoundException
 import com.doni.kotlinrestreturnman.error.OrderNotFoundException
+import com.doni.kotlinrestreturnman.error.ReturnOrderNotFoundException
 import com.doni.kotlinrestreturnman.model.*
 import com.doni.kotlinrestreturnman.repository.ItemRepository
 import com.doni.kotlinrestreturnman.repository.OrderRepository
@@ -57,8 +58,18 @@ class ReturnOrderServiceImpl(
         }
     }
 
-    override fun getReturnOrder(id: String): GetReturnOrderResponse {
-        TODO("Not yet implemented")
+    override fun getReturnOrder(id: Long): GetReturnOrderResponse {
+        var returnOrder = returnOrderRepository.findByIdOrNull(id) ?: throw ReturnOrderNotFoundException()
+
+        return GetReturnOrderResponse(
+                refundAmount = calculateRefundAmount(items = returnOrder.items),
+                status = returnOrder.status,
+                items = returnOrder.items.map { GetItemsResponse(
+                        quantity = it.quantity,
+                        qcStatus = it.qcStatus,
+                        price = it.price
+                ) }
+        )
     }
 
     private fun filterOrderItemsByItemIds(items: List<Item>, itemIds: List<Int>): List<Item> {
@@ -74,6 +85,6 @@ class ReturnOrderServiceImpl(
     }
 
     private fun calculateRefundAmount(items: List<Item>): Int {
-        return items.sumOf { it.price }
+        return items.sumOf { it.price * it.quantity }
     }
 }
