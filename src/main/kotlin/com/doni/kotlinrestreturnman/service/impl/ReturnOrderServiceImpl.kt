@@ -4,8 +4,7 @@ import com.doni.kotlinrestreturnman.entity.Item
 import com.doni.kotlinrestreturnman.entity.ReturnOrder
 import com.doni.kotlinrestreturnman.error.ItemToReturnNotFoundException
 import com.doni.kotlinrestreturnman.error.OrderNotFoundException
-import com.doni.kotlinrestreturnman.model.CreateReturnOrderRequest
-import com.doni.kotlinrestreturnman.model.ReturnOrderResponse
+import com.doni.kotlinrestreturnman.model.*
 import com.doni.kotlinrestreturnman.repository.ItemRepository
 import com.doni.kotlinrestreturnman.repository.OrderRepository
 import com.doni.kotlinrestreturnman.repository.ReturnOrderRepository
@@ -19,7 +18,7 @@ class ReturnOrderServiceImpl(
         val orderRepository: OrderRepository,
         val itemRepository: ItemRepository
 ) : ReturnOrderService {
-    override fun createReturnOrder(createReturnOrderRequest: CreateReturnOrderRequest): ReturnOrderResponse {
+    override fun createReturnOrder(createReturnOrderRequest: CreateReturnOrderRequest): CreateReturnOrderResponse {
         val orderEntity = orderRepository.findByIdOrNull(createReturnOrderRequest.orderId) ?: throw OrderNotFoundException()
 
         var itemsEntity = itemRepository.findByOrderIdAndQcStatusNotAndReturnOrderIdIsNull(orderEntity.orderId)
@@ -42,10 +41,24 @@ class ReturnOrderServiceImpl(
 
         returnOrderRepository.save(returnOrder)
 
-        return ReturnOrderResponse(
+        return CreateReturnOrderResponse(
                 returnOrderId = returnOrder.id,
                 refundAmount = calculateRefundAmount(returnOrder.items),
         )
+    }
+
+    override fun pendingReturn(pendingRequest: PendingRequest): PendingResponse {
+        var order = orderRepository.findByOrderIdAndEmailAddress(pendingRequest.orderId, pendingRequest.emailAddress)
+
+        if (order != null) {
+            return PendingResponse(token = "DEFAULT_TOKEN")
+        } else {
+            throw OrderNotFoundException()
+        }
+    }
+
+    override fun getReturnOrder(id: String): GetReturnOrderResponse {
+        TODO("Not yet implemented")
     }
 
     private fun filterOrderItemsByItemIds(items: List<Item>, itemIds: List<Int>): List<Item> {

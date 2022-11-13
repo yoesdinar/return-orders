@@ -1,8 +1,9 @@
 package com.doni.kotlinrestreturnman.service
 
-import com.doni.kotlinrestreturnman.model.CreateReturnOrderRequest
-import com.doni.kotlinrestreturnman.model.ReturnOrderResponse
+import com.doni.kotlinrestreturnman.model.*
 
 interface ReturnOrderService {
-    fun createReturnOrder(createReturnOrderRequest: CreateReturnOrderRequest): ReturnOrderResponse
+    fun createReturnOrder(createReturnOrderRequest: CreateReturnOrderRequest): CreateReturnOrderResponse
+    fun pendingReturn(pendingRequest: PendingRequest): PendingResponse
+    fun getReturnOrder(id: String): GetReturnOrderResponse
 }
