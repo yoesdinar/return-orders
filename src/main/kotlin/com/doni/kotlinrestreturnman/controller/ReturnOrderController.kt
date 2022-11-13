@@ -4,7 +4,6 @@ import com.doni.kotlinrestreturnman.model.CreateReturnOrderRequest
 import com.doni.kotlinrestreturnman.model.ReturnOrderResponse
 import com.doni.kotlinrestreturnman.model.WebResponse
 import com.doni.kotlinrestreturnman.service.ReturnOrderService
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController

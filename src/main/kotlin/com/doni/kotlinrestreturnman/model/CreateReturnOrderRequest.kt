@@ -4,5 +4,5 @@ data class CreateReturnOrderRequest (
         val orderId: String,
         val emailAddress: String,
         val token: String,
-        val items: List<CreateItemRequest>
+        val items: List<Int>?
 )

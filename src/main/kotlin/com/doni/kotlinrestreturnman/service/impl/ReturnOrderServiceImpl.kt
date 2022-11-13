@@ -1,34 +1,30 @@
 package com.doni.kotlinrestreturnman.service.impl
 
 import com.doni.kotlinrestreturnman.entity.Item
-import com.doni.kotlinrestreturnman.entity.Order
 import com.doni.kotlinrestreturnman.entity.ReturnOrder
+import com.doni.kotlinrestreturnman.error.NotFoundException
 import com.doni.kotlinrestreturnman.model.CreateReturnOrderRequest
 import com.doni.kotlinrestreturnman.model.ReturnOrderResponse
 import com.doni.kotlinrestreturnman.repository.ItemRepository
 import com.doni.kotlinrestreturnman.repository.OrderRepository
 import com.doni.kotlinrestreturnman.repository.ReturnOrderRepository
 import com.doni.kotlinrestreturnman.service.ReturnOrderService
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class ReturnOrderServiceImpl(
         val returnOrderRepository: ReturnOrderRepository,
-        ): ReturnOrderService {
+        val orderRepository: OrderRepository,
+        val itemRepository: ItemRepository
+) : ReturnOrderService {
     override fun createReturnOrder(createReturnOrderRequest: CreateReturnOrderRequest): ReturnOrderResponse {
-        val orderEntity = Order(
-                orderId = createReturnOrderRequest.orderId,
-                emailAddress = createReturnOrderRequest.emailAddress,
-        )
+        val orderEntity = orderRepository.findByIdOrNull(createReturnOrderRequest.orderId) ?: throw NotFoundException()
 
-        val itemsEntity = createReturnOrderRequest.items.map {
-            Item(
-                    sku = it.sku,
-                    quantity = it.quantity,
-                    price = it.price,
-                    itemName = it.itemName,
-                    order = orderEntity
-            )
+        var itemsEntity = itemRepository.findByOrderId(createReturnOrderRequest.orderId)
+
+        if (!createReturnOrderRequest.items.isNullOrEmpty()) {
+            itemsEntity = filterOrderItemsByItemIds(items = itemsEntity, itemIds = createReturnOrderRequest.items)
         }
 
         val returnOrder = ReturnOrder(
@@ -39,11 +35,18 @@ class ReturnOrderServiceImpl(
         returnOrderRepository.save(returnOrder)
 
         return ReturnOrderResponse(
-                code = 200,
                 returnOrderId = returnOrder.id,
-                refundAmount = 200000,
-                items = listOf()
+                refundAmount = calculateRefundAmount(returnOrder.items),
         )
     }
 
+    private fun filterOrderItemsByItemIds(items: List<Item>, itemIds: List<Int>): List<Item> {
+        return items.filter { item ->
+            itemIds.any { it == item.itemId }
+        }
+    }
+
+    private fun calculateRefundAmount(items: List<Item>): Int {
+        return items.sumOf { it.price }
+    }
 }

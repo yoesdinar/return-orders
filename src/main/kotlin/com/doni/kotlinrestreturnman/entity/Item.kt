@@ -19,9 +19,8 @@ data class Item (
         @Column(name = "itemName")
         val itemName: String,
 
-        @ManyToOne(fetch = FetchType.EAGER, optional = false)
-        @JoinColumn(name = "orderId")
-        val order: Order
+        @Column(name = "orderId")
+        val orderId: String
 
 ) {
         @Id

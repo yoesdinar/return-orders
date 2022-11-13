@@ -16,4 +16,5 @@ data class Order(
     @OneToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "returnOrderId")
     var returnOrder: ReturnOrder? = null
+
 }
