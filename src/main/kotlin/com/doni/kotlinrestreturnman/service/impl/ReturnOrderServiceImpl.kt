@@ -72,6 +72,12 @@ class ReturnOrderServiceImpl(
         )
     }
 
+    override fun updateQCStatus(returnOrderId: Long, itemId: Int, status: QcItemStatus): String {
+        var item = itemRepository.updateItemStatus(status, itemId = itemId , returnOrderId = returnOrderId)
+
+        if (item != null) return "OK" else throw ItemToReturnNotFoundException()
+    }
+
     private fun filterOrderItemsByItemIds(items: List<Item>, itemIds: List<Int>): List<Item> {
         return items.filter { item ->
             itemIds.any { it == item.itemId }

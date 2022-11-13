@@ -46,4 +46,21 @@ class ReturnOrderController(val returnOrderService: ReturnOrderService) {
                 data = getReturnOrderResponse
         )
     }
+
+    @PutMapping(
+            value = ["/returns/{id}/items/{itemId}/qc/{status}"],
+            produces = ["application/json"]
+    )
+    fun updateQCStatus(
+            @PathVariable("id") returnOrderId: Long,
+            @PathVariable("itemId") itemId: Int,
+            @PathVariable("status") status: QcItemStatus
+    ): WebResponse<String> {
+        val response = returnOrderService.updateQCStatus(returnOrderId = returnOrderId, itemId = itemId, status = status)
+        return WebResponse(
+                code = 200,
+                status = "OK",
+                data = response
+        )
+    }
 }
