@@ -5,6 +5,7 @@ import com.doni.kotlinrestreturnman.entity.ReturnOrder
 import com.doni.kotlinrestreturnman.error.ItemToReturnNotFoundException
 import com.doni.kotlinrestreturnman.error.OrderNotFoundException
 import com.doni.kotlinrestreturnman.error.ReturnOrderNotFoundException
+import com.doni.kotlinrestreturnman.error.UnauthorizedException
 import com.doni.kotlinrestreturnman.model.*
 import com.doni.kotlinrestreturnman.repository.ItemRepository
 import com.doni.kotlinrestreturnman.repository.OrderRepository
@@ -20,6 +21,10 @@ class ReturnOrderServiceImpl(
         val itemRepository: ItemRepository
 ) : ReturnOrderService {
     override fun createReturnOrder(createReturnOrderRequest: CreateReturnOrderRequest): CreateReturnOrderResponse {
+        if (createReturnOrderRequest.token.isNullOrEmpty() || createReturnOrderRequest.token != "DEFAULT_TOKEN") {
+            throw UnauthorizedException()
+        }
+
         val orderEntity = orderRepository.findByIdOrNull(createReturnOrderRequest.orderId) ?: throw OrderNotFoundException()
 
         var itemsEntity = itemRepository.findByOrderIdAndReturnOrderIdIsNull(orderEntity.orderId)
