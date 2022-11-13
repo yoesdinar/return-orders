@@ -25,7 +25,8 @@ class ReturnOrderServiceImpl(
             throw UnauthorizedException()
         }
 
-        val orderEntity = orderRepository.findByIdOrNull(createReturnOrderRequest.orderId) ?: throw OrderNotFoundException()
+        val orderEntity = orderRepository.findByOrderIdAndEmailAddress(createReturnOrderRequest.orderId, createReturnOrderRequest.emailAddress)
+                ?: throw OrderNotFoundException()
 
         var itemsEntity = itemRepository.findByOrderIdAndReturnOrderIdIsNull(orderEntity.orderId)
 
