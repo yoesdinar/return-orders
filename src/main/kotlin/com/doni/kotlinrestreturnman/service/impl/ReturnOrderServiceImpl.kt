@@ -22,7 +22,7 @@ class ReturnOrderServiceImpl(
     override fun createReturnOrder(createReturnOrderRequest: CreateReturnOrderRequest): CreateReturnOrderResponse {
         val orderEntity = orderRepository.findByIdOrNull(createReturnOrderRequest.orderId) ?: throw OrderNotFoundException()
 
-        var itemsEntity = itemRepository.findByOrderIdAndQcStatusNotAndReturnOrderIdIsNull(orderEntity.orderId)
+        var itemsEntity = itemRepository.findByOrderIdAndReturnOrderIdIsNull(orderEntity.orderId)
 
         if (!createReturnOrderRequest.items.isNullOrEmpty()) {
             itemsEntity = filterOrderItemsByItemIds(items = itemsEntity, itemIds = createReturnOrderRequest.items)
@@ -65,6 +65,7 @@ class ReturnOrderServiceImpl(
                 refundAmount = calculateRefundAmount(items = returnOrder.items),
                 status = returnOrder.status,
                 items = returnOrder.items.map { GetItemsResponse(
+                        itemId = it.itemId,
                         quantity = it.quantity,
                         qcStatus = it.qcStatus,
                         price = it.price
@@ -91,6 +92,7 @@ class ReturnOrderServiceImpl(
     }
 
     private fun calculateRefundAmount(items: List<Item>): Int {
-        return items.sumOf { it.price * it.quantity }
+        var filteredItems = items.filter { it.qcStatus != QcItemStatus.REJECTED }
+        return filteredItems.sumOf { it.price * it.quantity }
     }
 }
