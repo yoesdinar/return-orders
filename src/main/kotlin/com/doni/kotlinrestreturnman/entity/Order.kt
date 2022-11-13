@@ -1,17 +1,19 @@
 package com.doni.kotlinrestreturnman.entity
 
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "orders")
-data class Order (
-
+data class Order(
         @Id
-        val id: String,
+        @Column(name = "orderId")
+        val orderId: String,
 
         @Column(name = "emailAddress")
         val emailAddress: String,
-)
+
+        ) {
+    @OneToOne(fetch = FetchType.EAGER, optional = true)
+    @JoinColumn(name = "returnOrderId")
+    var returnOrder: ReturnOrder? = null
+}

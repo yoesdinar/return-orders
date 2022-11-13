@@ -1,23 +1,13 @@
 package com.doni.kotlinrestreturnman.entity
 
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import com.doni.kotlinrestreturnman.model.QcItemStatus
+import javax.persistence.*
 
 @Entity
 @Table(name = "items")
 data class Item (
 
         @Id
-        val Id: String,
-
-        @Column(name = "orderId")
-        val orderId: String,
-
-        @Column(name = "emailAddress")
-        val emailAddress: String,
-
         @Column(name = "sku")
         val sku: String,
 
@@ -28,5 +18,17 @@ data class Item (
         val price: Int,
 
         @Column(name = "itemName")
-        val itemName: String
-)
+        val itemName: String,
+
+        @ManyToOne(fetch = FetchType.EAGER, optional = false)
+        @JoinColumn(name = "orderId")
+        val order: Order
+
+) {
+        @Column(name = "qcStatus")
+        var qcStatus: QcItemStatus? = null
+
+        @ManyToOne(fetch = FetchType.EAGER, optional = true)
+        @JoinColumn(name = "returnOrderId")
+        var returnOrder: ReturnOrder? = null
+}
