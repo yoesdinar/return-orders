@@ -11,7 +11,7 @@ Request:
 ```json
 {
   "orderId": "string",
-  "email": "string"
+  "emailAddress": "string"
 }
 ```
 
@@ -37,6 +37,7 @@ Request:
 ```json
 {
   "orderId": "string",
+  "emailAddress": "string",
   "token": "string",
   "itemIds": "[number]" 
 }
