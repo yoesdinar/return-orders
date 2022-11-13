@@ -74,7 +74,9 @@ class ReturnOrderServiceImpl(
                         itemId = it.itemId,
                         quantity = it.quantity,
                         qcStatus = it.qcStatus,
-                        price = it.price
+                        price = it.price,
+                        itemName = it.itemName,
+                        sku = it.sku
                 ) }
         )
     }
