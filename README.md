@@ -34,6 +34,7 @@ Request:
 ```json
 {
   "orderId": "string",
+  "token": "string",
   "itemIds": "[string]"
 }
 ```
