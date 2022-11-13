@@ -38,7 +38,7 @@ Request:
 {
   "orderId": "string",
   "token": "string",
-  "itemIds": "[string]" 
+  "itemIds": "[number]" 
 }
 ```
 itemIds: list of item id if we want to do partial return
@@ -107,3 +107,32 @@ Request:
   "data": "string"
 }
 ```
+
+# EXAMPLE
+
+## pending
+POST: localhost:8080/pending/returns
+```json
+{
+  "orderId": "RK-478",
+  "emailAddress": "john@example.com"
+}
+```
+
+## create return order
+POST: localhost:8080/returns
+```json
+{
+  "orderId": "RK-478",
+  "emailAddress": "john@example.com",
+  "token": "DEFAULT_TOKEN",
+  "items": [123]
+}
+
+```
+
+## get return order by id
+GET: localhost:8080/returns/1
+
+## update status for item
+PUT: localhost:8080/returns/1/items/123/qc/REJECTED
