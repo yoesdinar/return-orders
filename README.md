@@ -19,7 +19,10 @@ Request:
 ```json
 {
   "code": "string",
-  "token": "string"
+  "status": "string",
+  "data" : {
+    "token": "string"
+  }
 }
 ```
 
@@ -35,30 +38,20 @@ Request:
 {
   "orderId": "string",
   "token": "string",
-  "itemIds": "[string]"
+  "itemIds": "[string]" 
 }
 ```
+itemIds: list of item id if we want to do partial return
 
 - Response
 ```json
 {
-  "code": "string",
-  "returnId": "string",
-  "refundAmount": "number",
-  "items": [
-    {
-        "id": "string",
-        "itemName": "string",
-        "quantity": "number",
-        "price": "number"
-    },
-    {
-        "id": "string",
-        "itemName": "string",
-        "quantity": "number",
-        "price": "number"
-    }
-  ]
+  "code": "number",
+  "status": "string",
+  "data": {
+    "returnOrderId": "number",
+    "refundAmount": "number"
+  }
 }
 ```
 
@@ -73,55 +66,44 @@ Request:
 - Response
 ```json
 {
-  "code": "string",
-  "returnId": "string",
-  "refundAmount": "number",
-  "status": "string",
-  "items": [
-    {
-        "id": "string",
-        "itemName": "string",
+  "code": "number",
+  "status": "OK",
+  "data": {
+    "refundAmount": "number",
+    "status": "string",
+    "items": [
+      {
+        "itemId": "number",
         "quantity": "number",
-        "price": "number",
-        "qcStatus": "string"
-    },
-    {
-        "id": "string",
-        "itemName": "string",
+        "qcStatus": "string",
+        "price": "number"
+      },
+      {
+        "itemId": "number",
         "quantity": "number",
-        "price": "number",
-        "qcStatus": "string"
-    }
-  ]
+        "qcStatus": "string",
+        "price": "number"
+      }
+    ]
+  }
 }
 ```
 
 ## Update QC Status of Item Return
 Request:
 - Method: PUT
-- EndPoint: /returns/:id/items/:itemId/qc/status
+- EndPoint: /returns/:id/items/:itemId/qc/:status
 - Header:
   - Content-Type: application/json
   - Accept: application/json
 
-- Body
-```json
-{
-  "qcStatus": "string"
-}
-```
-
 - Response
+
+- status is either: ACCEPTED or REJECTED
 ```json
 {
-  "code": "string",
-  "message": "string",
-  "item": {
-        "id": "string",
-        "itemName": "string",
-        "quantity": "number",
-        "price": "number",
-        "qcStatus": "string"
-    }
+  "code": "number",
+  "status": "string",
+  "data": "string"
 }
 ```
