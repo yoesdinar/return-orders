@@ -1,5 +1,5 @@
 package com.doni.kotlinrestreturnman.error
 
-class NotFoundException : Exception() {
+class OrderNotFoundException : Exception() {
 
 }

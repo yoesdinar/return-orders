@@ -8,10 +8,10 @@ import javax.persistence.*
 data class ReturnOrder(
 
         @OneToOne(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER, mappedBy = "returnOrder")
-        val order: Order,
+        var order: Order,
 
         @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, mappedBy = "returnOrder")
-        val items : List<Item>
+        var items : List<Item>
 
 ) {
     @Id
@@ -19,6 +19,7 @@ data class ReturnOrder(
     val id: Long = 0
 
     @Column(name = "status")
+    @Enumerated(EnumType.STRING)
     val status: ReturnOrderStatus = ReturnOrderStatus.AWAITING_APPROVAL
 
 }

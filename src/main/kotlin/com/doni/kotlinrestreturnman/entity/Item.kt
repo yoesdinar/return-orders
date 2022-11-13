@@ -28,7 +28,8 @@ data class Item (
         val itemId: Int = 0
 
         @Column(name = "qcStatus")
-        var qcStatus: QcItemStatus? = null
+        @Enumerated(EnumType.STRING)
+        var qcStatus: QcItemStatus = QcItemStatus.PENDING
 
         @ManyToOne(fetch = FetchType.EAGER, optional = true)
         @JoinColumn(name = "returnOrderId")

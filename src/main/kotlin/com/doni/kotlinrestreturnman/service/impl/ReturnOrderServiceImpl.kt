@@ -2,7 +2,8 @@ package com.doni.kotlinrestreturnman.service.impl
 
 import com.doni.kotlinrestreturnman.entity.Item
 import com.doni.kotlinrestreturnman.entity.ReturnOrder
-import com.doni.kotlinrestreturnman.error.NotFoundException
+import com.doni.kotlinrestreturnman.error.ItemToReturnNotFoundException
+import com.doni.kotlinrestreturnman.error.OrderNotFoundException
 import com.doni.kotlinrestreturnman.model.CreateReturnOrderRequest
 import com.doni.kotlinrestreturnman.model.ReturnOrderResponse
 import com.doni.kotlinrestreturnman.repository.ItemRepository
@@ -19,18 +20,25 @@ class ReturnOrderServiceImpl(
         val itemRepository: ItemRepository
 ) : ReturnOrderService {
     override fun createReturnOrder(createReturnOrderRequest: CreateReturnOrderRequest): ReturnOrderResponse {
-        val orderEntity = orderRepository.findByIdOrNull(createReturnOrderRequest.orderId) ?: throw NotFoundException()
+        val orderEntity = orderRepository.findByIdOrNull(createReturnOrderRequest.orderId) ?: throw OrderNotFoundException()
 
-        var itemsEntity = itemRepository.findByOrderId(createReturnOrderRequest.orderId)
+        var itemsEntity = itemRepository.findByOrderIdAndQcStatusNotAndReturnOrderIdIsNull(orderEntity.orderId)
 
         if (!createReturnOrderRequest.items.isNullOrEmpty()) {
             itemsEntity = filterOrderItemsByItemIds(items = itemsEntity, itemIds = createReturnOrderRequest.items)
+        }
+
+        if (itemsEntity.isNullOrEmpty()) {
+            throw ItemToReturnNotFoundException()
         }
 
         val returnOrder = ReturnOrder(
                 order = orderEntity,
                 items = itemsEntity
         )
+
+        returnOrder.order = returnOrder.order.apply { this.returnOrder = returnOrder }
+        returnOrder.items = injectItemsByReturnOrder(returnOrder.items, returnOrder)
 
         returnOrderRepository.save(returnOrder)
 
@@ -43,6 +51,12 @@ class ReturnOrderServiceImpl(
     private fun filterOrderItemsByItemIds(items: List<Item>, itemIds: List<Int>): List<Item> {
         return items.filter { item ->
             itemIds.any { it == item.itemId }
+        }
+    }
+
+    private fun injectItemsByReturnOrder(items: List<Item>, returnOrder: ReturnOrder): List<Item> {
+        return items.map {
+            it.apply { it.returnOrder = returnOrder }
         }
     }
 
