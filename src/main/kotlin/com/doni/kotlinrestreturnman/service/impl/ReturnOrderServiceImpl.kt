@@ -97,7 +97,7 @@ class ReturnOrderServiceImpl(
         }
     }
 
-    private fun calculateRefundAmount(items: List<Item>): Int {
+    private fun calculateRefundAmount(items: List<Item>): Double {
         var filteredItems = items.filter { it.qcStatus != QcItemStatus.REJECTED }
         return filteredItems.sumOf { it.price * it.quantity }
     }
