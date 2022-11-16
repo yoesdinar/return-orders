@@ -13,7 +13,6 @@ data class Order(
         val emailAddress: String,
 
         @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, mappedBy = "order")
-        @Column(insertable = false, updatable = false)
         var items : List<Item>
         ) {
 }
