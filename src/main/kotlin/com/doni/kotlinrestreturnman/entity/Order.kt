@@ -12,9 +12,8 @@ data class Order(
         @Column(name = "emailAddress")
         val emailAddress: String,
 
+        @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, mappedBy = "order")
+        @Column(insertable = false, updatable = false)
+        var items : List<Item>
         ) {
-    @OneToOne(fetch = FetchType.EAGER, optional = true)
-    @JoinColumn(name = "returnOrderId")
-    var returnOrder: ReturnOrder? = null
-
 }

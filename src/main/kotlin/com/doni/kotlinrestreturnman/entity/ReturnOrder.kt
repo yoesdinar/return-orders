@@ -7,9 +7,6 @@ import javax.persistence.*
 @Table(name = "returnOrders")
 data class ReturnOrder(
 
-        @OneToOne(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER, mappedBy = "returnOrder")
-        var order: Order,
-
         @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, mappedBy = "returnOrder")
         var items : List<Item>
 

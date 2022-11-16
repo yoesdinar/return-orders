@@ -25,10 +25,7 @@ class ReturnOrderServiceImpl(
             throw UnauthorizedException()
         }
 
-        val orderEntity = orderRepository.findByOrderIdAndEmailAddress(createReturnOrderRequest.orderId, createReturnOrderRequest.emailAddress)
-                ?: throw OrderNotFoundException()
-
-        var itemsEntity = itemRepository.findByOrderIdAndReturnOrderIdIsNull(orderEntity.orderId)
+        var itemsEntity = itemRepository.findByOrderOrderIdAndReturnOrderIdIsNull(createReturnOrderRequest.orderId)
 
         if (!createReturnOrderRequest.items.isNullOrEmpty()) {
             itemsEntity = filterOrderItemsByItemIds(items = itemsEntity, itemIds = createReturnOrderRequest.items)
@@ -39,11 +36,9 @@ class ReturnOrderServiceImpl(
         }
 
         val returnOrder = ReturnOrder(
-                order = orderEntity,
                 items = itemsEntity
         )
 
-        returnOrder.order = returnOrder.order.apply { this.returnOrder = returnOrder }
         returnOrder.items = injectItemsByReturnOrder(returnOrder.items, returnOrder)
 
         returnOrderRepository.save(returnOrder)

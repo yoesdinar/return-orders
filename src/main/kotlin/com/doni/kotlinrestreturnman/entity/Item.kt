@@ -19,9 +19,6 @@ data class Item (
         @Column(name = "itemName")
         val itemName: String,
 
-        @Column(name = "orderId")
-        val orderId: String
-
 ) {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +31,8 @@ data class Item (
         @ManyToOne(fetch = FetchType.EAGER, optional = true)
         @JoinColumn(name = "returnOrderId")
         var returnOrder: ReturnOrder? = null
+
+        @ManyToOne(fetch = FetchType.EAGER, optional = false)
+        @JoinColumn(name = "orderId")
+        var order: Order? = null
 }

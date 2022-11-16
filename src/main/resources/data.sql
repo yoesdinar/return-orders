@@ -1,10 +1,10 @@
 
-INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS, RETURN_ORDER_ID ) VALUES ('RK-478', 'john@example.com', null);
-INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS, RETURN_ORDER_ID) VALUES ('RK-642', 'will@example.com', null);
-INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS, RETURN_ORDER_ID) VALUES ('RK-238', 'carly@example.com', null);
-INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS, RETURN_ORDER_ID) VALUES ('RK-912', 'karen@example.com', null);
-INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS, RETURN_ORDER_ID) VALUES ('RK-239', 'steve@example.com', null);
-INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS, RETURN_ORDER_ID) VALUES ('RK-149', 'dalton@example.com', null);
+INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS ) VALUES ('RK-478', 'john@example.com');
+INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS) VALUES ('RK-642', 'will@example.com');
+INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS) VALUES ('RK-238', 'carly@example.com');
+INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS) VALUES ('RK-912', 'karen@example.com');
+INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS) VALUES ('RK-239', 'steve@example.com');
+INSERT INTO orders (ORDER_ID, EMAIL_ADDRESS) VALUES ('RK-149', 'dalton@example.com');
 
 INSERT INTO items (ITEM_ID, ORDER_ID, SKU, QUANTITY, PRICE, ITEM_NAME, QC_STATUS, RETURN_ORDER_ID) VALUES (123, 'RK-478','MENS-156', 2, 50, 'Small Black T-Shirt', 'PENDING', null);
 INSERT INTO items (ITEM_ID, ORDER_ID, SKU, QUANTITY, PRICE, ITEM_NAME, QC_STATUS, RETURN_ORDER_ID) VALUES (124, 'RK-478','NIKE-7', 1, 110.75, 'Nike Air Jordans - Size 7', 'PENDING', null);

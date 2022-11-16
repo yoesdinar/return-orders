@@ -10,7 +10,7 @@ import javax.transaction.Transactional
 
 
 interface ItemRepository : JpaRepository<Item, String> {
-    fun findByOrderIdAndReturnOrderIdIsNull(orderId: String): List<Item>
+    fun findByOrderOrderIdAndReturnOrderIdIsNull(orderId: String): List<Item>
 
     @Modifying
     @Transactional

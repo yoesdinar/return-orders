@@ -16,7 +16,8 @@ import com.doni.kotlinrestreturnman.repository.ReturnOrderRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import org.springframework.data.repository.findByIdOrNull
 import java.lang.Double
@@ -37,26 +38,26 @@ internal class ReturnOrderServiceImplTest {
             token = "DEFAULT_TOKEN",
             items = listOf(0)
         )
-        var order = Order(
-                orderId = "orderId",
-                emailAddress = "email"
-        )
 
         var items = listOf<Item>(
-               Item("sku", 2, 10.0, "nama item", "orderId1"),
-               Item("sku", 2, 10.0, "nama item", "orderId2")
+               Item("sku", 2, 10.0, "nama item"),
+               Item("sku", 2, 10.0, "nama item")
+        )
+        var order = Order(
+                orderId = "orderId",
+                emailAddress = "email",
+                items= items
         )
 
-        var returnOrder = ReturnOrder(order, items)
+        var returnOrder = ReturnOrder(items)
 
         every { orderRepository.findByOrderIdAndEmailAddress(any(), any())  } returns (order)
-        every { itemRepository.findByOrderIdAndReturnOrderIdIsNull(any())  } returns (items)
+        every { itemRepository.findByOrderOrderIdAndReturnOrderIdIsNull(any())  } returns (items)
         every { returnOrderRepository.save(any())  } returns (returnOrder)
 
         returnOrderService.createReturnOrder(createReturnOrderRequest)
         // then
-        verify(exactly = 1) { orderRepository.findByOrderIdAndEmailAddress(any(), any()) }
-        verify(exactly = 1) { itemRepository.findByOrderIdAndReturnOrderIdIsNull(any()) }
+        verify(exactly = 1) { itemRepository.findByOrderOrderIdAndReturnOrderIdIsNull(any()) }
         verify(exactly = 1) { returnOrderRepository.save(any()) }
     }
 
@@ -69,20 +70,20 @@ internal class ReturnOrderServiceImplTest {
                 items = listOf(0),
                 token = "wrong"
         )
+        var items = listOf<Item>(
+                Item("sku", 2, 10.0, "nama item"),
+                Item("sku", 2, 10.0, "nama item")
+        )
         var order = Order(
                 orderId = "orderId",
-                emailAddress = "email"
+                emailAddress = "email",
+                items = items
         )
 
-        var items = listOf<Item>(
-                Item("sku", 2, 10.0, "nama item", "orderId1"),
-                Item("sku", 2, 10.0, "nama item", "orderId2")
-        )
-
-        var returnOrder = ReturnOrder(order, items)
+        var returnOrder = ReturnOrder(items)
 
         every { orderRepository.findByOrderIdAndEmailAddress(any(), any())  } returns (order)
-        every { itemRepository.findByOrderIdAndReturnOrderIdIsNull(any())  } returns (items)
+        every { itemRepository.findByOrderOrderIdAndReturnOrderIdIsNull(any())  } returns (items)
         every { returnOrderRepository.save(any())  } returns (returnOrder)
 
 
@@ -94,32 +95,6 @@ internal class ReturnOrderServiceImplTest {
     }
 
     @Test
-    fun `when orderId not found request should return Order Not Found Exception`() {
-        
-        var createReturnOrderRequest = CreateReturnOrderRequest (
-                orderId = "orderId",
-                emailAddress = "email",
-                items = listOf(0),
-                token = "DEFAULT_TOKEN"
-        )
-        var order = null;
-
-        var items = listOf<Item>(
-                Item("sku", 2, 10.0, "nama item", "orderId1"),
-                Item("sku", 2, 10.0, "nama item", "orderId2")
-        )
-
-        every { orderRepository.findByOrderIdAndEmailAddress(any(), any())  } returns (order)
-        every { itemRepository.findByOrderIdAndReturnOrderIdIsNull(any())  } returns (items)
-
-        assertThrows(
-                OrderNotFoundException::class.java,
-                { returnOrderService.createReturnOrder(createReturnOrderRequest) },
-                "Order not Found"
-        )
-    }
-
-    @Test
     fun `when items entity not valid not found should return ItemToReturnNotFound Exception`() {
         var createReturnOrderRequest = CreateReturnOrderRequest (
                 orderId = "orderId",
@@ -127,16 +102,18 @@ internal class ReturnOrderServiceImplTest {
                 items = listOf(0),
                 token = "DEFAULT_TOKEN"
         )
-        var order = Order(
-                orderId = "orderId",
-                emailAddress = "email"
-        )
 
         var items = listOf<Item>(
         )
 
+        var order = Order(
+                orderId = "orderId",
+                emailAddress = "email",
+                items = items
+        )
+
         every { orderRepository.findByOrderIdAndEmailAddress(any(), any())  } returns (order)
-        every { itemRepository.findByOrderIdAndReturnOrderIdIsNull(any())  } returns (items)
+        every { itemRepository.findByOrderOrderIdAndReturnOrderIdIsNull(any())  } returns (items)
 
         assertThrows(
                 ItemToReturnNotFoundException::class.java,
@@ -153,7 +130,8 @@ internal class ReturnOrderServiceImplTest {
         )
         var order = Order(
                 orderId = "orderId",
-                emailAddress = "email"
+                emailAddress = "email",
+                items = listOf()
         )
 
         every { orderRepository.findByOrderIdAndEmailAddress(any(), any())  } returns (order)
@@ -183,17 +161,13 @@ internal class ReturnOrderServiceImplTest {
     @Test
     fun `when returnOrderId exist should return ReturnOrderResponse with valid refund`() {
         var id: Long = 1
-        var order = Order(
-                orderId = "orderId",
-                emailAddress = "email"
-        )
 
         var items = listOf<Item>(
-                Item("sku", 2, 10.0, "nama item", "orderId1"),
-                Item("sku", 2, 10.0, "nama item", "orderId2")
+                Item("sku", 2, 10.0, "nama item"),
+                Item("sku", 2, 10.0, "nama item")
         )
 
-        var returnOrder = ReturnOrder(order, items)
+        var returnOrder = ReturnOrder(items)
 
         every { returnOrderRepository.findByIdOrNull(any())  } returns (returnOrder)
 
@@ -206,22 +180,25 @@ internal class ReturnOrderServiceImplTest {
     @Test
     fun `when returnOrderId exist should return ReturnOrderResponse with valid refund with rejected QC status`() {
         var id: Long = 1
-        var order = Order(
-                orderId = "orderId",
-                emailAddress = "email"
-        )
 
-        var item1 =  Item("sku", 2, 15.0, "nama item", "orderId1")
+
+        var item1 =  Item("sku", 2, 15.0, "nama item")
         item1.qcStatus = QcItemStatus.REJECTED
-        var item2 =  Item("sku", 1, 14.0, "nama item", "orderId1")
+        var item2 =  Item("sku", 1, 14.0, "nama item")
         item2.qcStatus = QcItemStatus.ACCEPTED
-        var item3 =  Item("sku", 1, 10.0, "nama item", "orderId1")
+        var item3 =  Item("sku", 1, 10.0, "nama item")
 
         var items = listOf<Item>(
                item1, item2, item3
         )
 
-        var returnOrder = ReturnOrder(order, items)
+        var order = Order(
+                orderId = "orderId",
+                emailAddress = "email",
+                items = items
+        )
+
+        var returnOrder = ReturnOrder(items)
 
         every { returnOrderRepository.findByIdOrNull(any())  } returns (returnOrder)
 
